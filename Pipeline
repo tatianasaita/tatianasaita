@@ -1,0 +1,78 @@
+# TESTE 1
+library(igraph)
+library(ape)
+library(ade4)
+library(adegenet)
+library(phangorn)
+library(seqinr)
+library(Biostrings)
+
+# Sequência de DNA
+# "ATGCATGCATGCATGA"
+
+seq_name <- "/home/tatianasaita/Downloads/sequence1.fasta"
+seq <- readBStringSet(seq_name)
+#sequencia_sem_gaps <- gsub("-", "", seq1)
+#print(sequencia_sem_gaps)
+# Criar todas as combinações de três nucleotídeos presentes na sequência
+combinations <- c("A", "T", "C", "G")
+vertices <- unique(sapply(1:(nchar(seq) - 2), function(i) substr(seq, i, i + 2)))
+
+# Criar um gráfico vazio
+g <- graph.empty(n = length(vertices), directed = FALSE)
+
+# Adicionar vértices ao gráfico
+V(g)$name <- vertices
+
+# Adicionar arestas ao gráfico
+for (i in 1:(nchar(seq) - 3)) {
+  triplet1 <- substr(seq, i, i + 2)
+  triplet2 <- substr(seq, i + 1, i + 3)
+  if (triplet1 %in% vertices & triplet2 %in% vertices) {
+    g <- add_edges(g, c(which(V(g)$name == triplet1)[[1]], which(V(g)$name == triplet2)[[1]]))
+  }
+}
+
+# Plotar o gráfico
+plot(g, vertex.label.dist = 2, vertex.label.cex = 0.8)
+
+# Obter a matriz de adjacência
+matriz_adjacencia <- as_adjacency_matrix(g)
+
+# Visualizar a matriz de adjacência
+print(matriz_adjacencia)
+
+
+#TESTE 2 - 1 sequência real
+# Sequência de DNA e retirada de gaps
+seq_name2 <- "/home/tatianasaita/Downloads/sequence2.fasta"
+seq2 <- readBStringSet(seq_name2)
+seq2_sem_gaps <- gsub("-", "", seq2)
+print(seq2_sem_gaps)
+# Criar todas as combinações de três nucleotídeos presentes na sequência
+combinations <- c("A", "T", "C", "G")
+vertices <- unique(sapply(1:(nchar(seq2_sem_gaps) - 2), function(i) substr(seq2_sem_gaps, i, i + 2)))
+
+# Criar um gráfico vazio
+g2 <- graph.empty(n = length(vertices), directed = FALSE)
+
+# Adicionar vértices ao gráfico
+V(g2)$name <- vertices
+
+# Adicionar arestas ao gráfico
+for (i in 1:(nchar(seq2_sem_gaps) - 3)) {
+  triplet1 <- substr(seq2_sem_gaps, i, i + 2)
+  triplet2 <- substr(seq2_sem_gaps, i + 1, i + 3)
+  if (triplet1 %in% vertices & triplet2 %in% vertices) {
+    g2 <- add_edges(g2, c(which(V(g2)$name == triplet1)[[1]], which(V(g2)$name == triplet2)[[1]]))
+  }
+}
+
+# Plotar o gráfico
+plot(g2, vertex.label.dist = 2, vertex.label.cex = 0.8)
+
+# Obter a matriz de adjacência
+matriz_adjacencia <- as_adjacency_matrix(g)
+
+# Visualizar a matriz de adjacência
+print(matriz_adjacencia)
